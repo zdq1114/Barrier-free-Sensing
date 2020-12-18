@@ -9,6 +9,8 @@
     <script type="text/javascript">
     </script>
     <link rel="stylesheet" href="../web-lib/css/layui.css">
+    <script src="../web-lib/js/ezuikit.js"></script>
+    <script src="../web-lib/js/jquery.min.js"></script>
     <script src="../web-lib/js/layui.js"></script>
 
     <style type="text/css">
@@ -43,13 +45,62 @@
                     <li class="layui-nav-item"><a href="">退出</a></li>
                 </ul>
             </div>
-            <div class="layui-side layui-bg-black">
-                <div class="layui-card">
-                    <div class="layui-card-header">卡片面板</div>
-                    <div class="layui-card-body">
-                        卡片式面板面板通常用于非白色背景色的主体内<br>
-                        从而映衬出边框投影
+            <div class="layui-side layui-bg-black" style="width: 320px;">
+                <div class="layui-container" style="margin: 5px;width: 310px;padding-left: 3px;">
+                    <h2>查询</h2>
+                    <div class="layui-container" style="margin-bottom:8px;padding: 0;">
+                        <h5>输入起点</h5>
+                        <input type="text" class="input-serch-blog" name="" autocomplete="off" value="" id="url" placeholder="输入起点" style="margin-bottom: 2px;margin-top: 2px; width: 290px">
+                        <h5>输入终点</h5>
+                        <input type="text" class="input-serch-blog" name="" autocomplete="off" value="" id="end-words" placeholder="输入终点" style="margin-bottom: 2px;margin-top: 2px; width: 290px">
                     </div>
+
+                    <button id="init" type="button" class="layui-btn" >查询</button>
+                </div>
+                <div><hr/></div>
+                <div class="layui-container" style="margin: 5px;width: 310px;padding-left: 3px;">
+                    <h2>人流量</h2>
+                    <div class="layui-container" style="margin-bottom:8px;padding: 0;">
+                        <video
+                                id="myPlayer"
+                                autoplay
+                                src=""
+                                width="305"
+                                controls
+                                playsInline
+                                webkit-playsinline
+                                style="margin-top: 5px"
+                        >
+                        </video>
+
+                        <script>
+                            $('#init').click(function () {
+                                var url = $('#url').val().trim();
+                                $('#myPlayer').attr("src", url);
+                                var player = new EZUIKit.EZUIPlayer('myPlayer');
+                                // 日志
+                                <!--player.on('log', log); -->
+
+                                function log(str) {
+                                    var div = document.createElement('DIV');
+                                    div.innerHTML = (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') + JSON.stringify(str);
+                                    document.body.appendChild(div);
+                                }
+                                $("#stop").click(function () {
+                                    player.stop();
+                                })
+                            });
+                        </script>
+                    </div>
+
+                </div>
+                <hr/>
+                <div class="layui-container" style="margin: 5px;width: 310px;padding-left: 3px;">
+                    <h2>温湿度</h2>
+                    <div id="currentTemp">当前温度：</div>
+                    <div id="currentHumidity">当前湿度：</div>
+                    <div id="sensibleTemp">体感温度：</div>
+                    <div id="shade">是否有荫：</div>
                 </div>
             </div>
             <div class="layui-body">
@@ -158,8 +209,17 @@
                             </table>
                         </div>
                     </div>
-                </div>  
-            </div>  
-        </body>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        //注意：导航 依赖 element 模块，否则无法进行功能性操作
+        layui.use('element', function(){
+            var element = layui.element;
+
+            //…
+        });
+    </script>
 </body>
 </html>
