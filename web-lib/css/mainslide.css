@@ -1,0 +1,203 @@
+
+#lookup{
+    position: absolute;
+
+    background-color: rgb(53, 66, 88);
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    border: 2px solid #555555;
+
+    left: 1150px;
+    top: 17px;
+    height: 40px ;
+    width: 120px ;
+    /*    长宽*/
+
+}
+#search{
+    position: absolute;
+
+    box-sizing: border-box;
+    color: #0a0a0a;
+    /*border-radius: 4px;*/
+    background-color: rgba(52, 70, 114, 0.5);
+    background-image: url('./img/search.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+
+    left: 1270px;
+    top: 18px;
+    height: 37px ;
+    width: 60px ;
+    /*    长宽*/
+}
+#search:focus {
+    width: 240px;
+}
+
+#pointdetails{
+    position: absolute;
+    left:5px;
+    top: 80px;
+    height: 180px ;
+    width: 240px ;
+    background-color: rgba(75, 164, 205, 0.8);
+    border: 2px solid #555555;
+}
+
+#maincontainer
+{
+    position: absolute;
+    width:100%; /* width + border for IE 5.x */
+    margin: 0;
+    height:100%;
+    padding: 0;
+}
+#menuContainer
+{
+    position: relative;
+    /*background-color: #333f47;*/
+    background-color: rgb(88, 95, 99);
+    height: 10%;
+    margin: 0;
+    padding: 0;
+    border:1px solid #000000;
+}
+body {
+    margin:0px;
+}
+#bg
+{
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    position: absolute;
+    opacity: 1;
+    z-index: 0
+}
+#thetitle
+{
+    position: absolute;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 300%;
+    top: 17%;
+    left: 50%;
+    -ms-transform: translate(-50%,-50%);
+
+    -webkit-transform: translate(-50%,-50%);
+
+    transform: translate(-50%,-50%);
+    margin: 0;
+    padding: 0;
+}
+
+#Monitor{
+    position: absolute;
+    background-color: rgba(76, 175, 80, 0); /* 0*/
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    background-image: url('./img/GIS-TL_监测点4+.png');
+    left: 550px;
+    top: 190px;
+    height: 200px ;
+    width: 200px ;
+
+}
+#Monitor:hover
+{
+    height: 200px ;
+    width: 200px ;
+    background-image: url('./img/GIS-TL_监测点5+.png') ;
+}
+
+#Navigation{
+    position: absolute;
+    background-color: rgba(76, 175, 80, 0); /* 0*/
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    background-image: url('./img/导航4+.png');
+    left: 780px;
+    top: 190px;
+    height: 200px ;
+    width: 200px ;
+
+}
+#Navigation:hover
+{
+    height: 200px ;
+    width: 200px ;
+    background-image: url('./img/导航5+.png') ;
+}
+
+#monitor_title
+{
+    position: absolute;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 150%;
+    left: 600px;
+    top: 400px;
+
+    margin: 0;
+    padding: 0;
+}
+#navigation_title
+{
+    position: absolute;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 150%;
+    left: 830px;
+    top: 400px;
+
+    margin: 0;
+    padding: 0;
+}
+.swiper-container {
+    position: absolute;
+    top: 80%;
+    left: 25%;
+    width: 50%;
+    height: 20%;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    height: 75%;
+    top:0px;
+    /*background: rgba(76, 175, 80, 0.5);*/
+    background-color: rgba(55, 86, 132, 0.5);
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.swiper-pagination span
+{
+    background-color: #6f728d;
+}

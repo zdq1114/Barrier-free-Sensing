@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>无障碍信息应用平台</title>
+
+    <script type="text/javascript">
+        // require.config({ baseUrl : '../Source', waitSeconds : 60 });
+    </script>
+
+    <link rel="stylesheet" href="../web-lib/css/swiper-bundle.min.css">
+    <link rel="stylesheet" type="text/css" href="../web-lib/css/mainslide.css">
+    <style>
+        /*   style就是在html中加入css样式表的意思，和css效果一样  */
+        @import url(../Build/Cesium/Widgets/widgets.css);
+    </style>
+</head>
+<body>
+<!--主容器开始-->
+<div id="maincontainer">
+    <!--①标题部分开始-->
+
+    <img id="bg" src="../web-lib/img/bg.jpg">
+    <h1 id="thetitle">无障碍设施信息采集应用平台</h1>
+    <!--①标题部分结束-->
+    <div id="content">
+        <button id="Monitor" function=""> </button>
+        <button id="Navigation" function=""> </button>
+    </div>
+    <h2 id="monitor_title">实时监控</h2>
+    <h2 id="navigation_title">路线规划</h2>
+    <div id="search_func">
+        <input id="search" name="search" placeholder="输入点号或点名" type="text" />
+        <button id="lookup" function="">查找信息</button>
+    </div>
+    <div id="model-display" class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <img id="model_1" src="../web-lib/img/1.PNG" style="width:100%;" function="">
+                <span style="position: absolute;"> </span>
+            </div>
+            <div class="swiper-slide">
+                <img id="model_2" src="../web-lib/img/2.PNG" style="width:100%;">
+                <span style="position: absolute;"> </span>
+            </div>
+            <div class="swiper-slide">
+                <img id="model_3" src="../web-lib/img/3.PNG" style="width:100%;">
+                <span style="position: absolute;"> </span>
+            </div>
+            <div class="swiper-slide">
+                <img id="model_4" src="../web-lib/img/4.PNG" style="width:100%;">
+                <span style="position: absolute;"> </span>
+            </div>
+            <div class="swiper-slide">
+                <img id="model_5" src="../web-lib/img/5.PNG" style="width:100%;">
+                <span style="position: absolute;"> </span>
+            </div>
+            <div class="swiper-slide">
+                <img id="model_6" src="../web-lib/img/6.PNG" style="width:100%;">
+                <span style="position: absolute;"> </span>
+            </div>
+        </div>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="../web-lib/js/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+        var swiper = new Swiper('.swiper-container', {
+            slidesPerView: 3,
+            spaceBetween: 30,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            autoplay: {
+                delay: 2000,
+                disableOnInteraction: false,
+            },
+        });
+
+
+    </script>
+
+</div>
+<!--主容器结束-->
+</body>
+
+</html>

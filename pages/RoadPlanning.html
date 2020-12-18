@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路径规划</title>
+    <script src="../Cesium/Cesium.js"></script>
+    <link href="../Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script type="text/javascript">
+    </script>
+    <link rel="stylesheet" href="../WEB-INF/lib/css/layui.css">
+    <script src="../web-lib/js/layui.js"></script>
+
+    <style type="text/css">
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <body class="layui-layout-body">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <div class="layui-logo">校园无障碍设施信息系统</div>
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item"><a href="">信息采集</a></li>
+                    <li class="layui-nav-item layui-this"><a href="">路径规划</a></li>
+                    <li class="layui-nav-item"><a href="">设备检测</a></li>
+                </ul>
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="">用户信息</a>
+                        <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                            <dd><a href="">个人信息</a></dd>
+                            <dd><a href="">设置</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item"><a href="">退出</a></li>
+                </ul>
+            </div>
+            <div class="layui-side layui-bg-black">
+                <div class="layui-card">
+                    <div class="layui-card-header">卡片面板</div>
+                    <div class="layui-card-body">
+                        卡片式面板面板通常用于非白色背景色的主体内<br>
+                        从而映衬出边框投影
+                    </div>
+                </div>
+            </div>
+            <div class="layui-body">
+                <div id="cesiumContainer" class="layui-earth"></div>
+                <script>
+                    var googleMap = new Cesium.UrlTemplateImageryProvider({
+                        url: 'http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}&s=Gali',
+                        tilingScheme: new Cesium.WebMercatorTilingScheme(),
+                        minimumLevel: 1,
+                        maximumLevel: 20
+                    });
+
+                    var viewer = new Cesium.Viewer('cesiumContainer', {
+                        // terrainProvider: terrainProvider,
+                        animation: false, //是否显示动画控件
+                        shouldAnimate: true,
+                        homeButton: false, //是否显示Home按钮
+                        fullscreenButton: false, //是否显示全屏按钮
+                        baseLayerPicker: false, //是否显示图层选择控件
+                        geocoder: false, //是否显示地名查找控件
+                        timeline: false, //是否显示时间线控件
+                        sceneModePicker: true, //是否显示投影方式控件
+                        navigationHelpButton: false, //是否显示帮助信息控件
+                        infoBox: false, //是否显示点击要素之后显示的信息
+                        requestRenderMode: true, //启用请求渲染模式
+                        scene3DOnly: false, //每个几何实例将只能以3D渲染以节省GPU内存
+                        sceneMode: 3, //初始场景模式 1 2D模式 2 2D循环模式 3 3D模式  Cesium.SceneMode
+                        imageryProvider: googleMap
+                    });
+                    viewer.scene.globe.enableLighting = true;
+
+                    var scene = viewer.scene;
+                </script>
+                <div class="layui-footer layui-bg-black">
+                    <div class="left layui-card">
+                        <div class="layui-card-header">路径详情</div>
+                        <div class="layui-card-body">
+                            <table class="layui-table">
+                                <tr>
+                                    <td>1</td>
+                                    <td>求是二路</td>
+                                    <td>前方三百米左转</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>求是二路</td>
+                                    <td>前方三百米左转</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>求是二路</td>
+                                    <td>前方三百米左转</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>求是二路</td>
+                                    <td>前方三百米左转</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>求是二路</td>
+                                    <td>前方三百米左转</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>求是二路</td>
+                                    <td>前方三百米左转</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="right layui-card">
+                        <div class="layui-card-header">附近休息点</div>
+                        <div class="layui-card-body">
+                            <table class="layui-table">
+                                <tr>
+                                    <td>1</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>  
+            </div>  
+        </body>
+</body>
+</html>
