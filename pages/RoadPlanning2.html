@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路径规划</title>
+    <script src="../Cesium/Cesium.js"></script>
+    <link href="../Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script type="text/javascript">
+    </script>
+    <link rel="stylesheet" href="../web-lib/css/layui.css">
+    <script src="../web-lib/js/ezuikit.js"></script>
+    <script src="../web-lib/js/jquery.min.js"></script>
+    <script src="../web-lib/js/layui.js"></script>
+    <script src="../web-lib/js/addEntities.js"></script>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=70ac1ebc45cd055dfc109c9c8f2a2965">
+    </script>
+    <style type="text/css">
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <body class="layui-layout-body">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <div class="layui-logo">校园无障碍设施信息系统</div>
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item"><a href="">信息采集</a></li>
+                    <li class="layui-nav-item layui-this"><a href="">路径规划</a></li>
+                    <li class="layui-nav-item"><a href="">设备检测</a></li>
+                </ul>
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="">用户信息</a>
+                        <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                            <dd><a href="">个人信息</a></dd>
+                            <dd><a href="">设置</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item"><a href="">退出</a></li>
+                </ul>
+            </div>
+            <div class="layui-side layui-bg-black" style="width: 320px;">
+                <div class="layui-container" style="margin: 5px;width: 310px;padding-left: 3px;">
+                    <div style="font-size: 21px;margin-left: 10px;">导航</div><div id="point"></div>
+                    <div class="layui-container" style="margin-bottom:8px;padding: 0;">
+                        <div style="margin: 10px;">
+                            <div style="display: inline;font-size: 17px;margin-left: 20px;">选择起点</div>
+                            <button onclick="getstart()" style="width:50px">确定</button>
+                        </div>
+                        <div style="margin: 10px;">
+                            <div style="display: inline;font-size: 17px;margin-left: 20px;">选择终点</div>
+                            <button onclick="getend()" style="width:50px">确定</button>
+                        </div>
+                    </div>
+                    <div style="display: inline;">
+                        <button id="init" type="button" class="layui-btn" onclick="doWork()">查询</button>
+                    </div>
+                </div>
+                <div><hr/></div>
+                <div class="layui-container" style="margin: 5px;width: 310px;padding-left: 3px;">
+                    <h2>人流量</h2>
+                    <div class="layui-container" style="margin-bottom:8px;padding: 0;">
+                        <video
+                                id="myPlayer"
+                                autoplay
+                                src=""
+                                width="305"
+                                controls
+                                playsInline
+                                webkit-playsinline
+                                style="margin-top: 5px"
+                        >
+                        </video>
+
+                        <script>
+                            $('#init').click(function () {
+                                var test='https://hls01open.ys7.com/openlive/2e78ed17c1394e5b838ee20efc5dc376.hd.m3u8';
+                                var url = test.trim();
+                                //var url = $('#url').val().trim();
+                                $('#myPlayer').attr("src", url);
+                                var player = new EZUIKit.EZUIPlayer('myPlayer');
+                                // 日志
+                                //<!--player.on('log', log); -->
+
+                                function log(str) {
+                                    var div = document.createElement('DIV');
+                                    div.innerHTML = (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') + JSON.stringify(str);
+                                    document.body.appendChild(div);
+                                }
+                                $("#stop").click(function () {
+                                    player.stop();
+                                })
+
+                                var videoElm = document.getElementById("myPlayer");
+                                AddVideo(114.360280,30.533778,114.373061,30.542169,videoElm)
+                            });
+                        </script>
+                    </div>
+
+                </div>
+                <hr/>
+                <div class="layui-container" style="margin: 5px;width: 310px;padding-left: 3px;">
+                    <h2>温湿度</h2>
+                    <div id="currentTemp">当前温度：</div>
+                    <div id="currentHumidity">当前湿度：</div>
+                    <div id="sensibleTemp">体感温度：</div>
+                    <div id="shade">是否有荫：</div>
+                    <form name="form">
+                        <input type="file" name="files" id="files" style="display: none;"/>
+                        <input name="path" readonly>
+                        <input type="button" value="请选择温湿度传感器数据" onclick="document.form.files.click()">
+                    </form>
+                </div>
+            </div>
+            <div class="layui-body">
+                <div id="cesiumContainer" class="layui-earth"></div>
+                <div class="layui-footer layui-bg-black">
+                    <div class="left layui-card">
+                        <div class="layui-card-header">路径详情</div>
+                        <div class="layui-card-body">
+                            <table class="layui-table" id="route-instruction">
+                                <tr>
+                                    <td>序号</td>
+                                    <td>说明</td>
+                                    <td>动作</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="right layui-card">
+                        <div class="layui-card-header">附近休息点</div>
+                        <div class="layui-card-body">
+                            <table class="layui-table">
+                                <tr>
+                                    <td>1</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>自强超市</td>
+                                    <td>据您300m</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        //初始化地图
+        var map = new AMap.Map('container', {
+            resizeEnable: true, //是否监控地图容器尺寸变化
+        });
+        var lon=116.397428;
+        var lat=39.90923;
+        AMap.plugin('AMap.Geolocation', function() {
+            var geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：5s
+                buttonPosition:'RB',    //定位按钮的停靠位置
+                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
+
+            });
+            map.addControl(geolocation);
+            geolocation.getCurrentPosition(function(status,result){
+                if(status=='complete'){
+                    lat=result.position.lat;
+                    lon=result.position.lng;
+                }else{
+                    onError(result)
+                }
+                position(lon,lat)
+                currentPos = {"lon":lon,"lat":lat};
+                AddPoint(currentPos);
+            });
+
+        });
+
+        var gaodeMap=new Cesium.UrlTemplateImageryProvider({
+            url: "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+        });
+        var googleMap = new Cesium.UrlTemplateImageryProvider({
+            url: 'http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}&s=Gali',
+            tilingScheme: new Cesium.WebMercatorTilingScheme(),
+            minimumLevel: 1,
+            maximumLevel: 20
+        });
+
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+            // terrainProvider: terrainProvider,
+            animation: false, //是否显示动画控件
+            shouldAnimate: true,
+            homeButton: false, //是否显示Home按钮
+            fullscreenButton: false, //是否显示全屏按钮
+            baseLayerPicker: false, //是否显示图层选择控件
+            geocoder: false, //是否显示地名查找控件
+            timeline: false, //是否显示时间线控件
+            sceneModePicker: true, //是否显示投影方式控件
+            navigationHelpButton: false, //是否显示帮助信息控件
+            infoBox: false, //是否显示点击要素之后显示的信息
+            requestRenderMode: true, //启用请求渲染模式
+            scene3DOnly: false, //每个几何实例将只能以3D渲染以节省GPU内存
+            sceneMode: 3, //初始场景模式 1 2D模式 2 2D循环模式 3 3D模式  Cesium.SceneMode
+            imageryProvider: gaodeMap//底图
+        });
+        viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
+            url: "http://webst02.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scale=1&style=8",
+        }));
+        viewer.scene.globe.enableLighting = true;
+        var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        var WGS84 =  {
+            lng:116.397428,
+            lat:39.90923
+        }
+        
+        var start = "114.357914,30.526940"
+        var end = "114.358932,30.528501"
+        handler.setInputAction(function (movement) {
+            var position = viewer.scene.camera.pickEllipsoid(movement.position, viewer.scene.globe.ellipsoid);
+            var cartesian33 = new Cesium.Cartesian3(position.x, position.y, position.z);
+            var cartographic = Cesium.Cartographic.fromCartesian(cartesian33);
+            WGS84.lat = Cesium.Math.toDegrees(cartographic.latitude);
+            WGS84.lng = Cesium.Math.toDegrees(cartographic.longitude);
+            WGS84.lat =WGS84.lat.toString();
+            WGS84.lng =WGS84.lng.toString();
+            var lngIndex = WGS84.lng.indexOf(".") + 7;
+            var latIndex = WGS84.lat.indexOf(".") + 7;
+            WGS84.lng = WGS84.lng.substring(0, lngIndex);
+            WGS84.lat = WGS84.lat.substring(0, latIndex);
+            //var alt = cartographic.height;
+            //console.log(position);
+            $("#point").text(WGS84.lng+","+WGS84.lat);
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        //视频实体加载
+    </script>
+    <script>
+        //初始化导航
+         //获取路径，划线
+        function doWork() {
+            getRoute(start,end, (result) => {
+                if (!result) {
+
+                    return;
+                }
+                console.log(result);
+                let steps = result.paths[0].steps;
+                let positions = [];
+                let instructions_html = "<tr><td>序号</td><td>说明</td><td>动作</td></tr>";
+                for (let i = 0; i < steps.length; i++) {
+                    const path = steps[i];
+                    let polyline = path.polyline;
+                    let polylinePoints = polyline.split(/[,]|;/);
+                    positions = positions.concat(polylinePoints);
+
+                    // 将路径详细信息渲染到表格中
+                    instructions_html += "<tr><td>"+ String(i+1) + "</td><td>" + steps[i].instruction + "</td><td>" + steps[i].action +"</td></tr>";
+                }
+                console.log(instructions_html);
+                document.getElementById("route-instruction").innerHTML = instructions_html;
+                console.log(positions)
+                positions = positions.map(Number);
+                
+                var greenLine = viewer.entities.add({//加载线路到三维球
+                    name: "daohangline",
+                    polyline: {
+                        positions: Cesium.Cartesian3.fromDegreesArray(positions),
+                        width: 5,
+                        material: Cesium.Color.GREEN,
+                        clampToGround: true,
+                    },
+                });
+                //viewer.flyTo(greenLine);
+            });
+        }
+
+        //获取路径规划
+        function getRoute(start, end,callback) {
+
+            $.ajax({
+                url: 'https://restapi.amap.com/v3/direction/walking',
+                dataType: "json",
+                async: true,
+                data: {
+                    key: '72d72d1791a9565acd5d9712718f9e01',//申请的key值
+                    origin: start,//起点
+                    destination: end//终点
+                },
+                success: function (data) {
+                    if (data.status < 1) {
+                        $("#point").text("false1");
+                        callback(null);
+                    } else {
+                        $("#point").text("success");
+                        callback(data.route);
+                    }
+                },
+
+                error: function () {
+
+                    callback(null);
+
+                }
+            });
+        };
+    </script>
+    <script>
+        //注意：导航 依赖 element 模块，否则无法进行功能性操作
+        layui.use('element', function(){
+            var element = layui.element;
+
+            //…
+        });
+        function position(lon,lat) {
+            console.log(lon,lat)
+            viewer.camera.flyTo({
+                destination : Cesium.Cartesian3.fromDegrees(lon,lat,3000),
+                orientation : {
+                    heading : Cesium.Math.toRadians(0.0),
+                    pitch : Cesium.Math.toRadians(-90),
+                    roll : 0.0
+                }
+            });
+
+        }
+        function getstart(){
+            start=WGS84.lng+","+WGS84.lat;
+            $("#start-words").val(start);
+            startPt = {
+                "lon":WGS84.lng,
+                "lat":WGS84.lat
+            };
+            AddPoint(startPt);
+        }
+        function getend(){
+            end=WGS84.lng+","+WGS84.lat;
+            $("#end-words").val(end);
+            endPt = {
+                "lon":WGS84.lng,
+                "lat":WGS84.lat
+            };
+            AddPoint(endPt);
+        }
+
+        var x_PI = 3.14159265358979324 * 3000.0 / 180.0;
+        var PI = 3.1415926535897932384626;
+        var a = 6378245.0;
+        var ee = 0.00669342162296594323;
+
+        function gcj02towgs84(lng, lat) {
+            if (out_of_china(lng, lat)) {
+                return [lng, lat]
+            }
+            else {
+                var dlat = transformlat(lng - 105.0, lat - 35.0);
+                var dlng = transformlng(lng - 105.0, lat - 35.0);
+                var radlat = lat / 180.0 * PI;
+                var magic = Math.sin(radlat);
+                magic = 1 - ee * magic * magic;
+                var sqrtmagic = Math.sqrt(magic);
+                dlat = (dlat * 180.0) / ((a * (1 - ee)) / (magic * sqrtmagic) * PI);
+                dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * PI);
+                mglat = lat + dlat;
+                mglng = lng + dlng;
+                return [lng * 2 - mglng, lat * 2 - mglat]
+            }
+        }
+
+        function transformlat(lng, lat) {
+            var ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + 0.1 * lng * lat + 0.2 * Math.sqrt(Math.abs(lng));
+            ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0;
+            ret += (20.0 * Math.sin(lat * PI) + 40.0 * Math.sin(lat / 3.0 * PI)) * 2.0 / 3.0;
+            ret += (160.0 * Math.sin(lat / 12.0 * PI) + 320 * Math.sin(lat * PI / 30.0)) * 2.0 / 3.0;
+            return ret
+        }
+
+        function transformlng(lng, lat) {
+            var ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + 0.1 * lng * lat + 0.1 * Math.sqrt(Math.abs(lng));
+            ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0;
+            ret += (20.0 * Math.sin(lng * PI) + 40.0 * Math.sin(lng / 3.0 * PI)) * 2.0 / 3.0;
+            ret += (150.0 * Math.sin(lng / 12.0 * PI) + 300.0 * Math.sin(lng / 30.0 * PI)) * 2.0 / 3.0;
+            return ret
+        }
+
+        function out_of_china(lng, lat) {
+            return (lng < 72.004 || lng > 137.8347) || ((lat < 0.8293 || lat > 55.8271) || false);
+        }
+
+    </script>
+    <script type="text/javascript">
+        var d=new Date();
+        var hour=d.getHours();
+        var min=d.getMinutes();
+        if(min<30) min=15;
+        else min=45;
+        var inputElement = document.getElementById("files");
+        inputElement.addEventListener("change", handleFiles, false);
+        var str;
+        var obj;
+        function handleFiles() {
+            var selectedFile = document.getElementById("files").files[0];//获取读取的File对象
+            var reader = new FileReader();
+            reader.readAsText(selectedFile);//读取文件的内容
+            reader.onload = function(){
+                var str=this.result;
+                var obj=eval("("+str+")");
+                var line=hour*2;
+                if(min==30) line=line+1;
+                document.getElementById("currentTemp").innerHTML="当前温度："+obj.humiture[line].temp;
+                document.getElementById("currentHumidity").innerHTML="当前湿度："+obj.humiture[line].hum;
+            }
+        }
+    </script>
+</body>
+</html>
